@@ -1,24 +1,31 @@
 //=Main Part==================================================================//
 func main(args: [String]) -> Int32 {
-  // Your code goes here
+  // Your code goes here...
+  let (n, _) = *input().spMap(toInt)
+  for _ in 0..<n { print(input().spMap(toInt).reduce(0, +)) }
   return 0
 }
 
 //=Utilities for Programming Contests ========================================//
 import Foundation
 // input: read a line to ...
-@inlinable @inline(__always) func input() -> String { readLine()! }
-@inlinable @inline(__always) func input() -> Int    { Int(readLine()!)! }
-@inlinable @inline(__always) func input() -> Double { Double(readLine()!)! }
-@inlinable @inline(__always) func input(separator c: Character = " ") -> [String] { input().split(separator: c).map(String.init) }
-@inlinable @inline(__always) func input(separator c: Character = " ") -> [Int]    { input().split(separator: c).map{ Int(String($0))! } }
-@inlinable @inline(__always) func input(separator c: Character = " ") -> [Double] { input().split(separator: c).map{ Double(String($0))! } }
+@inlinable func input() -> String { readLine()! }
+// misc: string manipulation utils
+extension String {
+  @inlinable public func toInt() -> Int { Int(self)! }
+  @inlinable public func toDouble() -> Double { Double(self)! }
+  @inlinable public func split(_ c: Character = " ") -> [String] { self.split(separator: c).map(String.init) }
+  @inlinable public func spMap<T>(_ f: (String) -> T) -> [T] { self.split().map(f) }
+  @inlinable public func spMap<T>(_ c: Character = " ", _ f: (String) -> T) -> [T] { self.split(c).map(f) }
+}
+@inlinable func toInt(_ s: String) -> Int { Int(s)! }
+@inlinable func toDouble(_ s: String) -> Int { Int(s)! }
 // structured bindings: splat - let (a, b) = *arrayOfInt
 prefix operator *
-@inlinable @inline(__always) prefix func * <E> (a: [E]) -> (E, E)          { (a[0], a[1]) }
-@inlinable @inline(__always) prefix func * <E> (a: [E]) -> (E, E, E)       { (a[0], a[1], a[2]) }
-@inlinable @inline(__always) prefix func * <E> (a: [E]) -> (E, E, E, E)    { (a[0], a[1], a[2], a[3]) }
-@inlinable @inline(__always) prefix func * <E> (a: [E]) -> (E, E, E, E, E) { (a[0], a[1], a[2], a[3], a[4]) }
+@inlinable prefix func * <E> (a: [E]) -> (E, E)          { (a[0], a[1]) }
+@inlinable prefix func * <E> (a: [E]) -> (E, E, E)       { (a[0], a[1], a[2]) }
+@inlinable prefix func * <E> (a: [E]) -> (E, E, E, E)    { (a[0], a[1], a[2], a[3]) }
+@inlinable prefix func * <E> (a: [E]) -> (E, E, E, E, E) { (a[0], a[1], a[2], a[3], a[4]) }
 // ruby like assigment for nullable
 infix operator ||=
 @inlinable @inline(__always) func ||= <T> (lhs: inout T?, rhs: @autoclosure () -> T) { lhs = lhs ?? rhs() }
@@ -52,9 +59,9 @@ public struct Fork<T> {
     self.shiftDown(0)
     return value
   }
-  @inlinable @inline(__always) internal func parentIndex(_ index: Int) -> Int { (index - 1) / 2 }
-  @inlinable @inline(__always) internal func lChildIndex(_ index: Int) -> Int { 2 * index + 1 }
-  @inlinable @inline(__always) internal func rChildIndex(_ index: Int) -> Int { 2 * index + 2 }
+  @inlinable internal func parentIndex(_ index: Int) -> Int { (index - 1) / 2 }
+  @inlinable internal func lChildIndex(_ index: Int) -> Int { 2 * index + 1 }
+  @inlinable internal func rChildIndex(_ index: Int) -> Int { 2 * index + 2 }
   private mutating func heapify() -> Void {
     if self.data.count < 2 { return }
     for i in stride(from: (self.data.count / 2 - 1), through: 0, by: -1) { shiftDown(i) }
@@ -93,6 +100,30 @@ public struct UnionFind {
     (self.data[px], self.data[py]) = (self.data[px] &+ self.data[py], px)
   }
 }
-
+// in progress
+// segment tree: 1-indexed
+public struct SegmentTree<T> {
+  private var data: [T]
+  private var s: Int
+  private var f: (T, T) -> T
+  private var e: T
+  public init(size: Int, operation: @escaping (T, T) -> T, unit: T) {
+    self.e = unit
+    self.f = operation
+    self.s = 1
+    while self.s < size { self.s <<= 1 }
+    self.data = [T](repeating: self.e, count: self.s * 2)
+  }
+  public mutating func put(_ at: Int, _ value: T) -> Void { self.data[self.s + at] = value }
+  public mutating func update(_ at: Int, _ value: T) -> Void {
+    var k = at + self.s
+    self.data[k] = value
+    k >>= 1
+    while k > 0 {
+      self.data[k] = self.f(self.data[k<<1|1], self.data[k<<1|0])
+      k >>= 1
+    }
+  }
+}
 //=Execution==================================================================//
 exit(main(args: CommandLine.arguments))
