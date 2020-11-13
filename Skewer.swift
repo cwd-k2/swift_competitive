@@ -1,5 +1,5 @@
 // ruby like assigment for nullable
-infix operator ||=: AdditionPrecedence
+infix operator ||=: AssignmentPrecedence
 @inlinable
 func ||= <T> (lhs: inout T?, rhs: @autoclosure () -> T) { lhs = lhs ?? rhs() }
 

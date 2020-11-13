@@ -61,6 +61,6 @@ prefix operator *
 @inlinable prefix func * <E> (a: [E]) -> (E, E, E, E, E)
 { (a[0], a[1], a[2], a[3], a[4]) }
 // ruby like assigment for nullable
-infix operator ||=: AdditionPrecedence
+infix operator ||=: AssignmentPrecedence
 @inlinable
 func ||= <T> (lhs: inout T?, rhs: @autoclosure () -> T) { lhs = lhs ?? rhs() }
