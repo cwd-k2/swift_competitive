@@ -1,17 +1,43 @@
-/*=Main Part==================================================================*/
-let (n, _) = *line().split(toInt)
+/*************
+ * Main Part *
+ *************/
 
-for _ in 0..<n {
-  print(line().split(toInt).reduce(0, +))
+// example
+// paiza ラーニング > レベルアップ問題集 > スキルチェック見本問題 > 島探し
+let (m, n) = *line().split(toInt)
+
+var lands = (0..<n).map { _ in line().split(toInt) }
+
+var count = 0
+var stack = [(Int, Int)]()
+
+for i in 0..<n {
+  for j in 0..<m {
+    if lands[i][j] == 0 { continue }
+    stack.append((i, j))
+    count &+= 1
+
+    while let (y, x) = stack.popLast() {
+      lands[y][x] = 0
+      if y > 0     && lands[y - 1][x] == 1 { stack.append((y - 1, x)) }
+      if y < n - 1 && lands[y + 1][x] == 1 { stack.append((y + 1, x)) }
+      if x > 0     && lands[y][x - 1] == 1 { stack.append((y, x - 1)) }
+      if x < m - 1 && lands[y][x + 1] == 1 { stack.append((y, x + 1)) }
+    }
+  }
 }
 
-/*=Utilities for Programming Contests ========================================*/
+print(count)
+
+/*************
+ * Utilities *
+ *************/
 import Foundation
-// input: read a line to ...
+// line: read line
 @inlinable func line() -> String { readLine()! }
 // shorthand
 public typealias Dbl = Double
-// misc: string manipulation utils
+// string utils
 extension String {
   @inlinable public func toInt() -> Int { Int(self)! }
   @inlinable public func toDbl() -> Dbl { Dbl(self)! }
@@ -24,7 +50,7 @@ extension String {
 }
 @inlinable func toInt(_ s: String) -> Int { Int(s)! }
 @inlinable func toDbl(_ s: String) -> Dbl { Dbl(s)! }
-// structured bindings: splat - let (a, b) = *arrayOfInt
+// splat: let (a, b) = *arrayOfInt
 prefix operator *
 @inlinable prefix func * <E> (a: [E]) -> (E, E)
 { (a[0], a[1]) }
