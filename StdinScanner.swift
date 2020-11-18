@@ -37,32 +37,25 @@ print(count)
 import Foundation
 
 public class StdinScanner {
-  let sep: Character
-  var buf: ArraySlice<String> = []
+  private let sep: Character
+  private var idx: Int = 0
+  private var buf: [String] = []
 
   public init(_ sep: Character = " ") { self.sep = sep }
 
   private func read() -> Void {
-    self.buf = readLine()!.split(separator: self.sep).lazy.map(String.init)[...]
+    buf = readLine()!.split(separator: sep).lazy.map(String.init)
+    idx = 0
   }
 
   @discardableResult
   public func next() -> String {
-    guard let retval = self.buf.popFirst() else {
-      read()
-      return self.buf.popFirst()!
-    }
-    return retval
+    if idx == buf.count { read() }
+    idx &+= 1
+    return buf[idx - 1]
   }
   @inlinable public func rInt() -> Int    { Int(next())!    }
   @inlinable public func rDbl() -> Double { Double(next())! }
-
-  public func line() -> String {
-    if self.buf.count == 0 { return readLine()! }
-    let retval = self.buf.joined(separator: String(self.sep))
-    self.buf = []
-    return retval
-  }
 
   @inlinable public func next(_ n: Int) -> [String] {
     (0..<n).lazy.map { _ in next() }
@@ -82,5 +75,31 @@ public class StdinScanner {
   }
   @inlinable public func rDbl(_ n: Int, _ m: Int) -> [[Double]] {
     (0..<n).lazy.map { _ in rDbl(m) }
+  }
+
+  // ignoring current line's leftover
+  @discardableResult
+  public func line() -> String {
+    idx = buf.count
+    return readLine()!
+  }
+  @inlinable public func lInt() -> Int    { Int(line())!    }
+  @inlinable public func lDbl() -> Double { Double(line())! }
+
+  @inlinable public func line(_ n: Int) -> [String] {
+    (0..<n).lazy.map { _ in line() }
+  }
+  @inlinable public func lInt(_ n: Int) -> [Int]    {
+    (0..<n).lazy.map { _ in lInt() }
+  }
+  @inlinable public func lDbl(_ n: Int) -> [Double] {
+    (0..<n).lazy.map { _ in lDbl() }
+  }
+
+  @discardableResult
+  public func rest() -> String {
+    let ret = buf[idx..<buf.count].joined(separator: String(sep))
+    idx = buf.count
+    return ret
   }
 }
