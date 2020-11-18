@@ -42,13 +42,17 @@ public class StdinScanner {
 
   public init(_ sep: Character = " ") { self.sep = sep }
 
-  func read() -> ArraySlice<String> {
-    readLine()!.split(separator: self.sep).lazy.map(String.init)[...]
+  func read() -> Void {
+    self.buf = readLine()!.split(separator: self.sep).lazy.map(String.init)[...]
   }
 
+  @discardableResult
   public func next() -> String {
-    if self.buf.count == 0 { self.buf = read() }
-    return self.buf.popFirst()!
+    guard let retval = self.buf.popFirst() else {
+      read()
+      return self.buf.popFirst()!
+    }
+    return retval
   }
   @inlinable public func rInt() -> Int    { Int(next())!    }
   @inlinable public func rDbl() -> Double { Double(next())! }
