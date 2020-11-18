@@ -42,7 +42,7 @@ public class StdinScanner {
 
   public init(_ sep: Character = " ") { self.sep = sep }
 
-  func read() -> Void {
+  private func read() -> Void {
     self.buf = readLine()!.split(separator: self.sep).lazy.map(String.init)[...]
   }
 
