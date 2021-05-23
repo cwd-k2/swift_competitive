@@ -1,12 +1,26 @@
 /*************
  * Main Part *
  *************/
+import Foundation
 
 // example
 // paiza ラーニング > レベルアップ問題集 > スキルチェック見本問題 > 島探し
-let (m, n) = *line().split(toInt)
+// TODO: lazy の有無, 位置
+var scanner = AnyIterator {
+  readLine(strippingNewline: true)
+}.lazy.flatMap {
+  // $0.components(separatedBy: .whitespace).lazy
+  $0.split(separator: " ").map(String.init).lazy
+}.makeIterator()
 
-var lands = (0..<n).map { _ in line().split(toInt) }
+let m = Int(scanner.next()!)!
+let n = Int(scanner.next()!)!
+
+var lands = (0..<n).map { _ in
+  (0..<m).map { _ in
+    Int(scanner.next()!)!
+  }
+}
 
 var count = 0
 var stack = [(Int, Int)]()
@@ -28,39 +42,3 @@ for i in 0..<n {
 }
 
 print(count)
-
-/*************
- * Utilities *
- *************/
-import Foundation
-// line: read line
-@inlinable func line() -> String { readLine()! }
-// shorthand
-public typealias Dbl = Double
-// string utils
-extension String {
-  @inlinable public func toInt() -> Int { Int(self)! }
-  @inlinable public func toDbl() -> Dbl { Dbl(self)! }
-  @inlinable public func split
-  (sep c: Character = " ") -> [String]
-  { self.split(separator: c).map(String.init) }
-  @inlinable public func split<T>
-  (sep c: Character = " ", _ f: (String) -> T) -> [T]
-  { self.split(sep: c).map(f) }
-}
-@inlinable func toInt(_ s: String) -> Int { Int(s)! }
-@inlinable func toDbl(_ s: String) -> Dbl { Dbl(s)! }
-// splat: let (a, b) = *arrayOfInt
-prefix operator *
-@inlinable prefix func * <E> (a: [E]) -> (E, E)
-{ (a[0], a[1]) }
-@inlinable prefix func * <E> (a: [E]) -> (E, E, E)
-{ (a[0], a[1], a[2]) }
-@inlinable prefix func * <E> (a: [E]) -> (E, E, E, E)
-{ (a[0], a[1], a[2], a[3]) }
-@inlinable prefix func * <E> (a: [E]) -> (E, E, E, E, E)
-{ (a[0], a[1], a[2], a[3], a[4]) }
-// ruby like assigment for nullable
-infix operator ||=: AssignmentPrecedence
-@inlinable
-func ||= <T> (lhs: inout T?, rhs: @autoclosure () -> T) { lhs = lhs ?? rhs() }
