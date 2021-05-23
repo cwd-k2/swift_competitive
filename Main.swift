@@ -9,7 +9,6 @@ import Foundation
 var scanner = AnyIterator {
   readLine(strippingNewline: true)
 }.lazy.flatMap {
-  // $0.components(separatedBy: .whitespace).lazy
   $0.split(separator: " ").map(String.init).lazy
 }.makeIterator()
 
