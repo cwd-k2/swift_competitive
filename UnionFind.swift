@@ -1,18 +1,32 @@
 // union find tree
 public struct UnionFind {
   private var data: [Int]
-  public init(size: Int) { self.data = [Int](repeating: -1, count: size) }
-  public mutating func size(of group: Int) -> Int { -self.data[self.root(of: group)] }
-  public mutating func root(of id: Int)    -> Int {
-    if (self.data[id] < 0) { return id }
-    self.data[id] = root(of: self.data[id])
-    return self.data[id]
+
+  public init(size: Int) {
+    data = [Int](repeating: -1, count: size)
   }
-  public mutating func join(_ x: Int, _ y: Int) -> Void {
-    let (px, py) = (self.root(of: x), self.root(of: y))
+
+  public mutating func size(of group: Int) -> Int {
+    -data[root(of: group)]
+  }
+
+  public mutating func root(of id: Int) -> Int {
+    if data[id] < 0 { return id }
+
+    data[id] = root(of: data[id])
+
+    return data[id]
+  }
+
+  public mutating func join(_ x: Int, _ y: Int) {
+    let (px, py) = (root(of: x), root(of: y))
+
     if px == py { return }
-    if (self.data[px] > self.data[py]) { self.data.swapAt(px, py) }
-    (self.data[px], self.data[py]) = (self.data[px] &+ self.data[py], px)
+
+    if data[px] > data[py] {
+      data.swapAt(px, py)
+    }
+
+    (data[px], data[py]) = (data[px] &+ data[py], px)
   }
 }
-
