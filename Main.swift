@@ -1,12 +1,13 @@
-/*************
- * Main Part *
- *************/
 import Foundation
 
 // example
 // paiza ラーニング > レベルアップ問題集 > スキルチェック見本問題 > 島探し
-// TODO: lazy の有無, 位置
-var scanner = AnyIterator { readLine() }.join(separator: " ").split(separator: " ").makeIterator()
+var scanner = try FileHandle
+  .standardInput
+  .readToEnd()!
+  .split { $0 == 0x20 || $0 == 0x0A }
+  .map { String.init(data: $0, encoding: .utf8)! }
+  .makeIterator()
 
 let m = Int(scanner.next()!)!
 let n = Int(scanner.next()!)!
